@@ -2,7 +2,7 @@
 
 Indice del corso: [[MOC - Cognitive]]
 
-Percepire, scegliere un'azione e valutarne gli effetti sono attività coordinate nell'interazione con l'ambiente. Nei sistemi robotici, questo ciclo comprende anche la comunicazione con le persone e l'uso congiunto di informazioni provenienti da modalità diverse.
+Il capitolo spiega come percezione, azione e interazione si coordinino negli agenti autonomi e nei robot. Affronta il rapporto fra corpo e cognizione, la comunicazione con le persone e le difficoltà di integrare modalità diverse, utilizzando Reachy come esempio di collegamento fra sensori, decisioni e controllo del movimento.
 
 ## Argomenti
 

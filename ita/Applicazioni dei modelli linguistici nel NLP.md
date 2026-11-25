@@ -1,31 +1,35 @@
-# Applicazioni dei modelli linguistici nel NLP
-
 Capitolo: [[Adattamento, valutazione e applicazioni dei Foundation Models]]
 
-I modelli linguistici possono produrre testo, trasformare una sequenza in un'altra o costruire rappresentazioni utilizzate da classificatori e sistemi di ricerca. La stessa architettura di base può sostenere compiti diversi, ma il formato dell'input e l'obiettivo devono rendere chiara l'operazione richiesta.
+Un modello linguistico può essere usato come produttore di testo oppure come costruttore di rappresentazioni. Nel primo caso genera direttamente una risposta; nel secondo trasforma parole o documenti in vettori utilizzati da classificatori e sistemi di ricerca. La scelta dipende dal risultato richiesto, dai dati disponibili e dal costo dell'elaborazione.
 
-## Generazione e continuazione
+## Classificare un testo
 
-Un generatore autoregressivo assegna probabilità al token successivo e amplia progressivamente la sequenza. Il contesto può includere una richiesta, esempi o informazioni da utilizzare. La continuazione non è una consultazione garantita di un archivio di fatti: produrre testo plausibile e verificare una proposizione sono operazioni differenti.
+Consideriamo una recensione da assegnare a «positiva» o «negativa». Un encoder produce rappresentazioni contestuali: il significato di «buono» in «non è buono» dipende dalle parole circostanti. Una testa di classificazione trasforma una rappresentazione dell'intero testo in punteggi per le categorie. Con fine-tuning si possono aggiornare anche le rappresentazioni; con un encoder congelato si apprende soltanto il classificatore.
 
-L'adattamento alle istruzioni permette di orientare la generazione verso una risposta al compito. Non elimina la necessità di controllare quanto prodotto, soprattutto quando il testo contiene affermazioni sul mondo.
+Un'alternativa usa embedding di frasi già adatti al confronto semantico. Si possono fornire a un classificatore separato oppure confrontare con rappresentazioni delle descrizioni delle classi. In quest'ultimo caso una descrizione come «recensione che esprime insoddisfazione» funge da riferimento semantico. La formulazione delle categorie diventa parte del metodo e può influenzare il risultato.
 
-## Traduzione e trasformazioni testo-testo
+Un modello generativo può invece ricevere la recensione e produrre l'etichetta come testo, in zero-shot o few-shot. Questo rende flessibile la definizione del compito, ma introduce anche output non validi: «abbastanza negativa» non coincide necessariamente con una delle etichette ammesse. Prima della valutazione bisogna decidere come trattare questi casi.
 
-La traduzione collega una sequenza di origine a una di destinazione. In un encoder-decoder, il decoder usa sia il contesto già generato sia le rappresentazioni dell'encoder. L'attenzione consente di combinare parti pertinenti dell'input durante la produzione dell'output.
+## Assegnare un ruolo ai singoli token
 
-La formulazione testo-testo estende il principio a più compiti: l'input descrive un'operazione e il modello produce la sequenza richiesta. Un riassunto richiede di mantenere informazioni centrali senza aggiungere contenuti non sostenuti dal testo di origine. Questa è una condizione di qualità del compito, non un effetto automaticamente garantito dall'architettura.
+Altri compiti richiedono una previsione per ciascuna posizione anziché una sola categoria per l'intero testo. Nel riconoscimento di entità, il sistema individua persone, luoghi e organizzazioni e deve ricostruirne i confini anche quando un nome occupa più token. Nell'analisi delle parti del discorso assegna invece ruoli grammaticali, come nome o verbo. Nel question answering estrattivo può stimare le posizioni iniziale e finale del segmento che risponde alla domanda. Le rappresentazioni contestuali condividono l'informazione della frase, mentre la testa di uscita rispecchia il compito.
 
-Un riassunto estrattivo seleziona parti rilevanti del testo di origine, mentre una sintesi generativa produce una nuova sequenza. Le rappresentazioni contestuali possono sostenere la selezione dei passaggi senza richiedere che il modello generi ogni frase del riassunto. I due procedimenti devono essere valutati rispetto alla fedeltà e alle informazioni mantenute.
+## Generare e trasformare sequenze
 
-## Classificazione e rappresentazioni
+Nella generazione autoregressiva, il modello distribuisce probabilità sui possibili token successivi e ne seleziona uno alla volta. Ogni scelta diventa contesto per le successive. La procedura di selezione può favorire continuazioni più prevedibili oppure più varie; una maggiore varietà non implica maggiore correttezza.
 
-Nella classificazione, un modello di rappresentazione può produrre vettori utilizzati da una testa specifica o da un classificatore separato. Un modello generativo può invece restituire l'etichetta come testo, per esempio «positivo» o «negativo». Prima di valutare il risultato occorre definire come interpretare output non conformi al formato.
+La traduzione richiede una relazione più vincolata fra input e output. In un encoder-decoder, l'encoder rappresenta il testo di origine, mentre il decoder genera la traduzione considerando sia ciò che ha già prodotto sia le rappresentazioni di origine tramite cross-attention. Per tradurre un pronome o una parola ambigua serve quindi conservare il contesto, non sostituire ogni parola in modo indipendente.
 
-Una classificazione basata su embedding può confrontare il testo con descrizioni delle classi, senza addestrare un nuovo classificatore supervisionato su quel dataset. L'efficacia dipende dalla qualità delle rappresentazioni e dalla formulazione delle categorie.
+La formulazione testo-testo estende questo meccanismo: una richiesta può chiedere di tradurre, correggere o riassumere. Il formato esterno è simile, ma cambia ciò che rende valida la risposta. Una traduzione deve preservare il significato; una correzione deve modificare gli errori senza alterare il contenuto; un riassunto deve selezionare le informazioni centrali.
 
-## Question answering e conoscenza esterna
+## Riassumere senza perdere il contenuto
 
-Una risposta può essere prodotta usando il solo contesto disponibile oppure documenti recuperati appositamente. Nel secondo caso, il sistema deve identificare l'informazione pertinente e poi utilizzarla coerentemente. Il recupero non basta se il generatore trascura i passaggi utili o aggiunge dettagli inventati.
+Un riassunto estrattivo seleziona frasi del documento e le assembla. Un riassunto generativo riformula le informazioni in una nuova sequenza. Il primo può mantenere formulazioni fedeli ma risultare poco coeso; il secondo può collegare meglio le idee, introducendo però il rischio di dettagli non presenti.
 
-Nel question answering, un sistema [[RAG]] può fornire al generatore i documenti pertinenti alla domanda, sui quali fondare la risposta. Traduzione, riassunto e question answering condividono l'elaborazione di sequenze, ma richiedono verifiche differenti su correttezza, completezza e fedeltà.
+Se un testo afferma che una procedura è valida soltanto per una versione del prodotto, omettere tale condizione cambia il significato. La qualità del riassunto dipende quindi anche dalle relazioni e dai vincoli conservati, non soltanto dalla brevità o dalla somiglianza delle parole.
+
+## Cercare informazioni e rispondere
+
+La ricerca semantica usa embedding per recuperare passaggi pertinenti anche quando domanda e documento impiegano vocaboli diversi. La vicinanza fra vettori seleziona candidati; un reranker può valutarne meglio il rapporto con la domanda. La risposta viene poi costruita dal generatore usando i testi selezionati, come nel [[RAG]].
+
+Nel question answering estrattivo si individua un segmento del documento che contiene la risposta; in quello generativo si formula un nuovo testo, eventualmente combinando più passaggi. Una domanda su «chi collabora con chi» può richiedere relazioni esplicite in un grafo, oltre alla similarità testuale. Le [[Metriche di valutazione dei Foundation Models|verifiche]] devono seguire questa differenza: riconoscere un'etichetta, preservare una traduzione e sostenere una risposta con evidenze non sono lo stesso obiettivo.

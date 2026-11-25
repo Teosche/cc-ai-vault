@@ -2,24 +2,26 @@
 
 Capitolo: [[Paradigmi di apprendimento]]
 
-Il self-supervised learning costruisce il segnale di addestramento a partire dai dati stessi. Non richiede che un annotatore fornisca un'etichetta manuale per ogni esempio del compito costruito; rimangono però una funzione obiettivo, target di previsione e scelte sul modo di trasformare gli input.
+Il self-supervised learning ricava dai dati il target rispetto al quale addestrare il modello. Il testo «il gatto dorme» contiene già la risposta al compito «prevedi la parola dopo il gatto»: non serve annotare manualmente una categoria. Una loss confronta comunque previsione e target e produce aggiornamenti dei pesi. L'assenza di etichette aggiunte da un annotatore non significa assenza di supervisione o di scelte progettuali.
 
-## Costruire un compito dai dati
+## Predire parti mancanti o future
 
-Nel linguaggio, i token di un testo possono fornire il target per prevedere una parte mancante o il token successivo. Il modello riceve una porzione di informazione e viene ottimizzato rispetto a quella che deve ricostruire. La supervisione viene quindi derivata dalla struttura del dato, anziché aggiunta come categoria esterna.
+Nel masked language modeling si nasconde una parte dei token e si chiede di ricostruirla utilizzando il contesto disponibile. In «ho lasciato le chiavi sul [MASK]», le parole prima e dopo la posizione possono contribuire alla previsione. Per riuscirci su molti esempi, il modello deve apprendere regolarità sintattiche e semantiche.
 
-Il termine non significa «apprendimento senza obiettivo». La scelta di che cosa nascondere o prevedere determina quali regolarità possano essere utili. Mascherare posizioni e prevedere continuazioni impongono vincoli differenti, come spiegato in [[Obiettivi di pre-training linguistico]].
+Nel preaddestramento di BERT viene selezionato il 15% delle posizioni: fra queste, l'80% è sostituito con il token di mascheramento, il 10% con un token casuale e il 10% resta invariato. Le posizioni selezionate rimangono quelle su cui si calcola l'obiettivo. La presenza occasionale di token non mascherati evita che l'apprendimento dipenda esclusivamente da un simbolo assente nell'uso normale.
 
-## Apprendimento contrastivo
+Nel causal language modeling si predice invece ciascun token usando soltanto quelli precedenti. Una maschera impedisce di vedere il futuro, che renderebbe banale il compito. Questo obiettivo è direttamente collegato alla generazione autoregressiva: durante l'inferenza, il modello riceve un prefisso e lo prolunga.
 
-Un'altra impostazione confronta rappresentazioni di coppie positive e negative. Trasformazioni della stessa immagine possono fornire viste positive; altre immagini possono funzionare da negativi. Il compito favorisce rappresentazioni che conservino informazioni utili nonostante le trasformazioni considerate.
+Un encoder-decoder può essere addestrato al denoising: riceve una sequenza corrotta da cancellazioni, mascheramenti o permutazioni e ricostruisce l'originale. La struttura del compito cambia ciò che conviene apprendere, come approfondito negli [[Obiettivi di pre-training linguistico]].
 
-In CLIP, la coppia immagine-descrizione costituisce il positivo e le altre combinazioni del batch forniscono negativi impliciti. Le associazioni naturali fra modalità forniscono un segnale ricco, ma non privo di scelte o di possibili errori nei dati.
+## Apprendere somiglianze attraverso il contrasto
 
-Non ogni tecnica contrastiva è self-supervised: se le coppie positive vengono costruite usando categorie annotate, la supervisione è diversa. Occorre specificare da dove provenga il criterio di associazione.
+Nell'apprendimento contrastivo si costruiscono coppie positive e negative. Due viste ottenute dalla stessa immagine possono formare una coppia positiva; immagini diverse forniscono negativi. L'obiettivo avvicina le rappresentazioni dei positivi e rende distinguibili quelle dei negativi. Le trasformazioni definiscono quali variazioni il modello dovrebbe ignorare: un ritaglio moderato può conservare il soggetto, uno eccessivo può eliminarlo.
 
-## Preaddestramento e riuso
+In CLIP si usano coppie immagine-testo. Con un batch di tre coppie si confronta ogni immagine con tutti e tre i testi: le tre corrispondenze originarie sono positive, le sei combinazioni incrociate fungono da negativi impliciti. La loss considera entrambe le direzioni, immagine verso testo e testo verso immagine, costruendo uno spazio in cui modalità diverse siano confrontabili.
 
-Le rappresentazioni apprese possono essere congelate oppure ulteriormente adattate a compiti supervisionati. Il vantaggio consiste nel riutilizzare struttura acquisita da grandi quantità di dati, riducendo la necessità di apprendere tutto da un dataset specifico.
+Le associazioni immagine-descrizione costituiscono già una forma di supervisione naturale e possono essere rumorose. Inoltre, due immagini diverse possono avere descrizioni semanticamente equivalenti: un negativo costruito dal batch non è necessariamente un opposto concettuale. Il metodo va descritto attraverso l'origine effettiva delle coppie, non soltanto con l'etichetta «contrastivo».
 
-Resta necessario verificare il trasferimento al nuovo dominio. Il fatto che il target sia ricavato dai dati non impedisce al modello di apprendere correlazioni indesiderate o informazioni poco pertinenti per l'applicazione. Self-supervision e correttezza delle conoscenze non sono la stessa proprietà.
+## Riutilizzare ciò che è stato appreso
+
+Le rappresentazioni possono essere congelate per addestrare una testa oppure adattate con [[Fine-tuning e adattamento efficiente|fine-tuning]]. Il vantaggio è non dover imparare ogni regolarità da pochi dati annotati. Il trasferimento resta da verificare: un obiettivo che ricostruisce bene il testo può apprendere anche stereotipi e correlazioni poco utili per il compito finale.

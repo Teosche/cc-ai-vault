@@ -55,7 +55,7 @@ Quando arriva un nuovo token, ricalcolare da zero tutto il testo precedente sare
 
 Se sono disponibili 1000 token e ne viene aggiunto uno, si calcolano le nuove key e value e si confronta la nuova query con le key disponibili. Non occorre ricostruire tutte le rappresentazioni passate. Il modello deve comunque consultare il contesto: il costo dell'attenzione **per singolo passo con cache** cresce linearmente con la sua lunghezza. Produrre molti token richiede molti passi, quindi questa proprietà non rende costante il costo dell'intera risposta.
 
-Il vantaggio si paga in memoria. Una cache densa occupa circa:
+**Il vantaggio si paga in memoria**. Una cache densa occupa circa:
 
 $$
 M_{KV}\approx 2\,L\,B\,n\,H_{KV}\,d_h\,s.

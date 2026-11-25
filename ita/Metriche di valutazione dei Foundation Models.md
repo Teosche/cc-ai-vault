@@ -2,36 +2,40 @@
 
 Capitolo: [[Adattamento, valutazione e applicazioni dei Foundation Models]]
 
-Valutare un Foundation Model richiede di definire il compito e il risultato che si considera utile. Una metrica di classificazione, una misura di previsione dei token e una valutazione della fedeltà di una risposta descrivono aspetti differenti. Nessun singolo valore riassume automaticamente tutte le capacità del sistema.
+Una valutazione misura quanto un modello risolva un compito definito su dati che non ha usato per adattarsi a quel compito. Prima di scegliere una metrica occorre stabilire quale errore conta: perdere un caso raro, classificare male una recensione, recuperare un documento inutile o inventare un dettaglio in una risposta sono problemi diversi.
 
-## Dati separati e generalizzazione
+## Separare apprendimento e verifica
 
-Il training set serve ad aggiornare i parametri; il validation set sostiene le scelte di modello e configurazione; il test set deve restare separato per la valutazione finale. Se il test viene utilizzato ripetutamente per scegliere le configurazioni, perde il ruolo di verifica indipendente.
+Il training set aggiorna i parametri; il validation set permette di scegliere configurazioni, soglie e momento di arresto; il test set misura il risultato finale dopo queste scelte. Continuare a scegliere in base al test lo trasforma di fatto in un altro validation set. Anche un prompt ottimizzato ripetutamente sugli stessi esempi può adattarsi alla valutazione.
 
-Anche la distribuzione degli esempi conta. Un modello che assegna sempre la classe maggioritaria può ottenere un'accuracy elevata su dati sbilanciati senza riconoscere la classe rara. Occorre esaminare la natura degli errori e non soltanto il loro numero complessivo.
+La cross-validation ripete la procedura su diverse suddivisioni. In una cross-validation a dieci fold si addestra su nove parti e si valuta sulla parte restante, ruotandone il ruolo. Se serve anche selezionare iperparametri, tale selezione deve restare interna ai dati di addestramento di ciascuna prova. La variabilità fra prove aiuta a capire quanto il risultato dipenda dalla suddivisione.
 
-## Classificazione
+La separazione deve rispettare l'origine dei dati. Slice dello stesso paziente o frammenti quasi identici dello stesso documento non dovrebbero essere distribuiti fra training e test quando si vuole misurare la generalizzazione a pazienti o documenti nuovi. Altrimenti il sistema può riconoscere caratteristiche già incontrate, producendo una stima troppo favorevole.
 
-La matrice di confusione distingue veri positivi, falsi positivi, veri negativi e falsi negativi. Per denominatori non nulli:
+## Leggere gli errori di classificazione
+
+La matrice di confusione confronta classe reale e prevista. Per una classe positiva, $TP$ sono i positivi riconosciuti, $FN$ quelli persi, $FP$ i negativi dichiarati positivi e $TN$ i negativi riconosciuti. L'accuracy è la quota di previsioni corrette sul totale, ma può nascondere uno scarso riconoscimento della classe rara.
+
+Supponiamo di avere 100 esempi, di cui 10 positivi. Il modello riconosce 8 positivi, ne perde 2 e segnala erroneamente 12 negativi. Ha dunque 8 veri positivi, 2 falsi negativi, 12 falsi positivi e 78 veri negativi: l'accuracy è 86%. Un modello che rispondesse sempre «negativo» otterrebbe 90%, pur perdendo tutti i positivi.
+
+Per distinguere queste situazioni si usano:
 
 $$
-\operatorname{Precision}=\frac{TP}{TP+FP},\qquad
-\operatorname{Recall}=\frac{TP}{TP+FN},\qquad
-F_1=\frac{2PR}{P+R}.
+P=\frac{TP}{TP+FP},\qquad R=\frac{TP}{TP+FN},\qquad F_1=\frac{2PR}{P+R}.
 $$
 
-$P$ e $R$ indicano rispettivamente precision e recall. La precision misura quanti positivi previsti sono corretti; il recall quanti positivi reali vengono recuperati. La media armonica penalizza uno squilibrio fra i due. Nel multiclass, la media macro assegna lo stesso peso alle classi; quella weighted pesa per il supporto; la micro aggrega i conteggi prima del calcolo. Weighted e macro non sono sinonimi.
+La precision risponde a «quante segnalazioni positive sono corrette?»; il recall a «quanti positivi reali sono stati trovati?». Nell'esempio valgono 40% e 80%, mentre $F_1$ è circa 53,3%. Abbassare una soglia può aumentare il recall facendo crescere anche i falsi allarmi. La scelta dipende dal costo relativo degli errori, non soltanto dal punteggio più alto.
 
-## Previsione linguistica e generazione
+Nel multiclass si può calcolare una misura per classe e poi aggregarla. La media macro dà uguale peso alle classi; quella weighted pesa per la loro numerosità; la micro somma prima i conteggi. La macro rende più visibile una classe rara gestita male. Occorre specificare anche come vengono trattati denominatori nulli.
 
-La perplexity può essere calcolata come esponenziale della loss media di previsione dei token, se la loss usa logaritmi naturali. Un valore inferiore indica una migliore assegnazione di probabilità ai token del testo di valutazione, nelle condizioni adottate. Il confronto richiede attenzione a tokenizer, dati e convenzioni di calcolo.
+## Valutare previsione e generazione linguistica
 
-Questo non dimostra che ogni risposta sia vera o utile. Ripetizioni, aderenza alla richiesta e affermazioni inventate richiedono controlli aggiuntivi. BLEU permette di valutare traduzioni mediante un confronto con riferimenti. Il suo risultato va letto rispetto al compito, senza estenderlo a un giudizio generale sull'intelligenza del modello.
+La cross-entropy misura quanta probabilità il modello assegna ai token effettivamente osservati. La perplexity è l'esponenziale della loss media quando si usano logaritmi naturali: loss più bassa significa perplexity più bassa. Il confronto richiede dati, tokenizzazione e convenzioni compatibili. Prevedere meglio un corpus non equivale però a rispondere correttamente a ogni domanda fattuale.
 
-## Retrieval e risposte fondate sui documenti
+BLEU confronta sequenze di parole della traduzione generata con traduzioni di riferimento, penalizzando anche uscite troppo brevi. Può cogliere somiglianze utili, ma una traduzione corretta con parole diverse può essere penalizzata. Per riassunti e risposte occorre inoltre controllare informazioni mantenute, aggiunte indebite e rispetto della richiesta.
 
-Nel retrieval, conta anche l'ordine dei risultati: un documento pertinente in prima posizione è più utile dello stesso documento nascosto in fondo alla lista. Average precision e mean average precision aggregano questa qualità rispetto a query con giudizi di rilevanza.
+## Valutare ricerca e risposte documentali
 
-Per un sistema [[RAG]] occorre separare il recupero dalla generazione. Una risposta può essere fluida ma poco supportata; una citazione può essere presente senza sostenere l'affermazione associata. Fedeltà al contesto, rilevanza della risposta, supporto delle citazioni e copertura delle affermazioni descrivono dimensioni diverse.
+Nel retrieval conta la posizione dei documenti pertinenti. Per una query con due documenti rilevanti, trovati al primo e al terzo posto, le precision nelle posizioni rilevanti sono $1$ e $2/3$. L'average precision è quindi $(1+2/3)/2\simeq0,833$. Il denominatore considera tutti i documenti rilevanti previsti dal giudizio di riferimento; perderne uno peggiora il risultato. La mean average precision media questo valore fra query. La nDCG permette inoltre di rappresentare gradi diversi di rilevanza e riduce il peso dei risultati lontani dalla cima.
 
-Un LLM usato come giudice può aiutare a organizzare la valutazione, ma resta un valutatore fallibile. Criteri espliciti e controlli umani restano necessari per interpretare i punteggi.
+Per un [[RAG]] vanno valutati separatamente recupero e generazione. La fedeltà controlla che le affermazioni siano sostenute dal contesto; la rilevanza della risposta che risolvano la domanda. La precision delle citazioni verifica se i riferimenti sostengono le frasi associate, mentre la loro copertura verifica quante affermazioni dispongano di supporto. Un testo può essere fluido e pertinente ma contenere un fatto inventato. Un LLM usato come giudice può accelerare questi controlli, purché i criteri siano espliciti e il suo accordo con valutazioni umane venga verificato.

@@ -1,23 +1,37 @@
-# Algoritmi fondamentali di reinforcement learning
-
 Capitolo: [[Reinforcement learning e processi decisionali]]
 
-Il reinforcement learning riguarda un agente che interagisce con un ambiente e utilizza ricompense per migliorare il comportamento. Non riceve necessariamente, per ogni situazione, un'etichetta che indichi l'azione corretta. Deve invece collegare le scelte compiute alle conseguenze osservate.
+Quando transizioni e ricompense non sono note, l'agente apprende dalle sequenze osservate. Ogni transizione fornisce uno stato $s$, un'azione $a$, una ricompensa $r$ e uno stato successivo $s'$. La difficoltà è trasformare questi campioni in una stima delle conseguenze future e in una policy migliore, senza confondere un esito fortunato con una regolarità affidabile.
 
-## Feedback e attribuzione del risultato
+## Monte Carlo e temporal-difference
 
-A uno stato segue un'azione, poi un nuovo stato e una ricompensa. Una difficoltà è definire un feedback coerente con il compito; un'altra è capire quali scelte precedenti abbiano contribuito a un risultato. Una ricompensa tardiva può dipendere da una sequenza di azioni, non soltanto dall'ultima.
+Monte Carlo stima il valore attraverso i ritorni di episodi completati. Se una stessa situazione compare in più prove, si possono mediare i ritorni osservati da quel punto. Il metodo non richiede un modello delle transizioni, ma deve attendere il seguito dell'episodio e può ricevere segnali molto variabili.
 
-L'interazione può essere illustrata attraverso un simulatore, ma non è corretto trasformare l'esempio in un requisito universale: il principio riguarda apprendimento dall'esperienza, non l'obbligo di usare sempre un simulatore o l'impossibilità di utilizzare esperienze registrate.
+Temporal-difference, o TD, aggiorna invece una stima usando la ricompensa immediata e la stima dello stato successivo:
 
-## Prestazione, apprendimento ed esplorazione
+$$
+V(s)\leftarrow V(s)+\alpha\left[r+\gamma V(s')-V(s)\right].
+$$
 
-Nell'architettura generale dei [[Learning Agents]], l'elemento di prestazione seleziona azioni e l'elemento di apprendimento ne modifica il funzionamento. Il critico fornisce una valutazione e il generatore di problemi suggerisce azioni esplorative. Ripetere soltanto ciò che appare già conveniente può impedire di scoprire alternative migliori.
+La parentesi è l'errore TD: confronta la vecchia previsione con il target $r+\gamma V(s')$. Il passo $\alpha$ regola quanto correggerla. Utilizzare una stima per costruirne un'altra prende il nome di bootstrapping e permette aggiornamenti prima della fine dell'episodio, introducendo però dipendenza dall'accuratezza delle stime correnti.
 
-Questa separazione aiuta a comprendere il problema, ma non specifica ancora un particolare algoritmo RL. Un criterio di valutazione, una politica di scelta e una regola di aggiornamento devono essere descritti esplicitamente prima di poter parlare di una procedura completa.
+## Da una stima di valore alla scelta
 
-## Preferenze umane come segnale
+Per scegliere senza conoscere le transizioni è utile stimare $Q(s,a)$, il valore di ogni azione nello stato. Una policy greedy sceglie il valore massimo, ma può ignorare azioni ancora poco provate. Una policy epsilon-greedy sceglie con probabilità $\varepsilon$ un'azione casuale e altrimenti un'azione con valore massimo. L'esplorazione raccoglie informazioni; lo sfruttamento usa quelle già disponibili.
 
-Nell'RLHF, un modello di ricompensa assegna punteggi alle risposte e una policy viene adattata per aumentare la ricompensa. Il sistema apprende quindi rispetto al feedback rappresentato da quel modello, che non coincide automaticamente con verità o qualità complessiva delle risposte.
+SARSA aggiorna $Q(s,a)$ verso $r+\gamma Q(s',a')$, dove $a'$ è l'azione effettivamente selezionata dalla policy nel nuovo stato. Il nome richiama la sequenza stato, azione, ricompensa, stato, azione. È on-policy perché apprende il valore del comportamento seguito, compresa la sua esplorazione.
 
-La distinzione fra obiettivo dichiarato e misura effettivamente utilizzata rimane fondamentale anche per modelli linguistici. Ottenere un punteggio più alto non basta a dimostrare che ogni comportamento sia appropriato.
+Q-learning usa invece il valore massimo disponibile nel nuovo stato:
+
+$$
+Q(s,a)\leftarrow Q(s,a)+\alpha\left[r+\gamma\max_bQ(s',b)-Q(s,a)\right].
+$$
+
+L'azione $b$ rappresenta la migliore continuazione stimata, anche se l'agente esplorativo sceglierà altro. È quindi off-policy: la policy appresa dal target può differire da quella che produce i dati.
+
+## Un aggiornamento svolto
+
+Supponiamo che $Q(s,a)=2$, la ricompensa osservata sia 1 e nel nuovo stato i valori siano 3 e 5. Con $\gamma=0,9$, Q-learning costruisce il target $1+0,9\cdot5=5,5$. Con $\alpha=0,1$, la nuova stima è $2+0,1(5,5-2)=2,35$. Non sostituisce il valore con l'esito di una sola prova: lo corregge parzialmente.
+
+Se la policy esplorativa sceglie nel nuovo stato l'azione di valore 3, SARSA usa il target 3,7 e aggiorna a 2,17. La differenza riflette ciò che i due metodi stanno stimando. Se la transizione è terminale, il termine di valore futuro è zero.
+
+Questi esempi tabellari chiariscono i meccanismi. Le garanzie di convergenza richiedono condizioni su visite alle coppie stato-azione e passi di apprendimento; non si trasferiscono automaticamente alle reti neurali delle [[Deep Q-Networks]].

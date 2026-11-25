@@ -1,8 +1,6 @@
-# Paradigmi di apprendimento
-
 Indice del corso: [[MOC - Cognitive]]
 
-I paradigmi di apprendimento si distinguono per l'origine del segnale usato per apprendere e per il modo in cui l'apprendimento viene organizzato. Nel self-supervised learning, gli obiettivi vengono costruiti a partire dai dati stessi, come nel preaddestramento linguistico e nell'apprendimento contrastivo.
+Il capitolo presenta quattro modi di organizzare l’apprendimento: costruire il segnale dai dati stessi, imparare ad adattarsi a nuovi compiti, acquisire nuove capacità senza perdere quelle precedenti e addestrare un modello condiviso mantenendo distribuiti i dati. Per ciascun paradigma vengono spiegati problema, funzionamento e limiti.
 
 ## Argomenti
 

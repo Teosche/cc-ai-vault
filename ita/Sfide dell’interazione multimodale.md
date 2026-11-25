@@ -2,22 +2,28 @@
 
 Capitolo: [[Percezione, interazione e robotica]]
 
-Un sistema multimodale utilizza informazioni di natura diversa, come testo e immagini, per rappresentare una situazione o scegliere una risposta. Il problema non è soltanto raccogliere più dati, ma stabilire come le informazioni si riferiscano fra loro e quale ruolo abbiano nel compito.
+Un sistema multimodale usa canali diversi, come testo, immagini e suoni, per costruire una rappresentazione o scegliere un'azione. Avere più informazioni può ridurre alcune ambiguità, ma richiede di stabilire quali elementi corrispondano, come combinarli e quale evidenza debba sostenere una conclusione.
 
-## Allineare e fondere
+## Allineare rappresentazioni diverse
 
-L'allineamento di CLIP rende confrontabili rappresentazioni visive e linguistiche in uno spazio comune. Altre architetture inseriscono caratteristiche visive nel contesto di un modello linguistico o calcolano attenzione congiunta. La modalità di fusione determina quali interazioni fra informazioni siano possibili.
+CLIP addestra un encoder visivo e uno testuale a produrre vettori confrontabili. Una coppia immagine-descrizione viene avvicinata rispetto ad associazioni non corrispondenti. Si può così confrontare una fotografia con descrizioni candidate, anche per categorie espresse soltanto in parole.
 
-Un'immagine e la sua descrizione possono fornire informazioni complementari senza essere intercambiabili. Il testo può omettere dettagli visivi; l'immagine può non rendere accessibili intenzioni o fatti esterni. Aggiungere una modalità non elimina automaticamente l'incertezza delle altre.
+L'allineamento non rende intercambiabili i canali. «Un cane nel parco» omette colore, posizione e molti dettagli della fotografia; l'immagine può non mostrare il nome del cane o il motivo per cui si trovi lì. La similarità utile al recupero non implica una corrispondenza completa di tutte le informazioni.
 
-## Coerenza fra evidenze
+## Fondere per elaborare insieme
 
-Un modello può privilegiare una scorciatoia linguistica e trascurare dettagli visivi pertinenti. I problemi di allineamento logico fra modalità mostrano che riconoscere gli elementi e utilizzarli correttamente in un'inferenza sono passaggi differenti.
+Le architetture possono mettere token visivi e testuali in un'elaborazione con attenzione congiunta, oppure proiettare le caratteristiche di un encoder visivo nello spazio accettato da un modello linguistico. Nel primo caso le rappresentazioni interagiscono durante una parte condivisa dell'elaborazione; nel secondo un collegamento appreso rende l'uscita visiva utilizzabile dal backbone linguistico.
 
-La verifica deve quindi seguire il collegamento fra osservazione, rappresentazione e conclusione. Una risposta plausibile non basta a dimostrare che tutte le evidenze rilevanti siano state considerate.
+La scelta del punto di fusione cambia dove le modalità possono influenzarsi. Un buon riconoscitore di oggetti non diventa automaticamente un buon risolutore di domande sulle relazioni: deve preservare anche numero, posizione e legami fra elementi. Le etichette di fusione vanno quindi collegate al percorso effettivo dei dati.
 
-## Interazione ed esecuzione
+## Usare le evidenze anziché una scorciatoia
 
-Negli agenti che agiscono, il problema si estende al passaggio dai segnali ai comandi. Le percezioni fisiche possono essere rese disponibili al modello in forma testuale o vettoriale, ma l'esecuzione richiede componenti capaci di operare sull'ambiente e restituire feedback.
+Se una domanda chiede se vi siano più oggetti rossi che blu, una risposta plausibile dal solo testo può trascurare un elemento dell'immagine. L'errore può nascere dal conteggio visivo, dall'associazione fra colori e oggetti o dal confronto finale. Separare questi passaggi rende il problema verificabile.
 
-Nell'[[Interazione uomo-robot|interazione uomo-robot]], comprendere una richiesta deve tradursi in un'azione coerente con la situazione percepita. La valutazione deve quindi controllare sia l'interpretazione del messaggio sia gli effetti prodotti, oltre alla qualità del dialogo.
+Nei sistemi neuro-simbolici come LogiCAM, l'estrazione di premesse cerca di rendere esplicito il contenuto da usare nel ragionamento. Se il dettaglio visivo viene perso in questa fase, la logica successiva non può recuperarlo. L'allineamento fra modalità deve quindi riguardare anche ciò che le premesse affermano, non soltanto la vicinanza dei vettori.
+
+## Collegare i canali a una situazione che cambia
+
+Nell'interazione, una parola come «questo» può riferirsi a un oggetto indicato in un certo momento. Testo, gesto e immagine devono descrivere la stessa situazione; se la scena cambia, una rappresentazione precedente può diventare inadeguata. Il ciclo percezione-azione deve mantenere riconoscibile quale osservazione sostenga il comando corrente.
+
+Per un robot, le caratteristiche sensoriali devono infine diventare posizioni, obiettivi e operazioni eseguibili. La verifica comprende quindi coerenza della rappresentazione, correttezza della conclusione e risultato dell'azione. Nei casi ambigui, acquisire una nuova osservazione o chiedere una precisazione è parte della soluzione, non un fallimento della sola capacità linguistica.

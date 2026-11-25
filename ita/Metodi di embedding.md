@@ -6,7 +6,7 @@ Un embedding è una rappresentazione vettoriale di dati, costruita in modo che l
 
 ## Rappresentazioni distribuite
 
-Una rappresentazione basata soltanto sulla presenza o frequenza delle parole distingue i testi mediante il lessico osservato. Metodi come word2vec apprendono invece vettori a partire dai contesti in cui le parole compaiono. Parole utilizzate in contesti simili possono ottenere rappresentazioni vicine.
+Una rappresentazione basata soltanto sulla presenza o frequenza delle parole distingue i testi mediante il lessico osservato. Metodi come word2vec apprendono invece vettori a partire dai contesti in cui le parole compaiono. **Parole utilizzate in contesti simili possono ottenere rappresentazioni vicine.**
 
 Le coordinate non devono essere interpretate come un elenco di concetti umani chiaramente nominabili. L'informazione è distribuita fra molte dimensioni: la rappresentazione complessiva può risultare utile anche quando una singola coordinata non ha un significato intuitivo.
 

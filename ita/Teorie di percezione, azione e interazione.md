@@ -1,23 +1,27 @@
-# Teorie di percezione, azione e interazione
-
 Capitolo: [[Percezione, interazione e robotica]]
 
-Un sistema cognitivo integra percezione, selezione dell'azione, memoria e apprendimento. La percezione trasforma stimoli in rappresentazioni utilizzabili; l'azione modifica le condizioni che verranno percepite in seguito. Il collegamento forma un ciclo, non una successione che termina dopo una sola risposta.
+La percezione trasforma segnali sensoriali in rappresentazioni utilizzabili per decidere. L'azione modifica l'ambiente e quindi i segnali che diventeranno disponibili. Nelle architetture cognitive questi processi sono collegati a memoria, apprendimento e ragionamento: interpretare una scena dipende da ciò che il sistema cerca e da ciò che sa già.
 
-## Percepire e selezionare
+## Selezionare informazione utile
 
-Le informazioni possono provenire da visione, udito e canali tattili o cinestetici. Il sistema non elabora necessariamente ogni segnale con la stessa priorità: l'attenzione seleziona informazioni rilevanti, restringe il campo della ricerca o sopprime elementi non pertinenti.
+Un robot può ricevere immagini, suoni, informazioni tattili e misure della configurazione del proprio corpo. La visione può individuare un oggetto, mentre una misura di posizione articolare indica dove si trovi il braccio. I segnali contribuiscono a una descrizione utilizzabile della situazione, con livelli diversi di incertezza.
 
-La selezione dipende da obiettivi e condizioni correnti. Non coincide con l'attenzione matematica del Transformer: il termine può indicare un problema cognitivo generale oppure una specifica operazione computazionale.
+L'attenzione limita la quantità di informazione da elaborare. Un meccanismo selettivo può orientare lo sguardo verso un oggetto; uno restrittivo può circoscrivere la ricerca agli oggetti rossi; uno soppressivo può ridurre il peso di regioni irrilevanti. La richiesta «trova la tazza rossa» rende quindi alcuni segnali più utili di altri.
 
-## Pianificare e reagire
+Questa nozione cognitiva di attenzione riguarda la selezione rispetto a obiettivi e risorse. Il meccanismo di attenzione del Transformer è una specifica operazione sui vettori: può essere un componente del sistema, ma non esaurisce il problema cognitivo.
 
-La selezione dell'azione determina che cosa fare dopo. La pianificazione costruisce una sequenza prima dell'esecuzione, mentre una selezione dinamica utilizza la conoscenza disponibile al momento della scelta. Le due impostazioni possono cooperare: un piano non elimina la necessità di controllare osservazioni e risultati.
+## Agire per percepire meglio
 
-La prospezione riguarda l'anticipazione del futuro e orienta azioni verso esiti desiderati. La simulazione interna può contribuire a confrontare possibilità, ma va distinta dall'osservazione effettiva dell'ambiente.
+Se una tazza è coperta da un altro oggetto, spostare il punto di vista può renderla riconoscibile. L'azione serve allora ad acquisire informazione prima ancora che a completare la manipolazione. La nuova immagine modifica la rappresentazione e può cambiare la decisione successiva.
 
-## Corpo e sviluppo
+La pianificazione anticipa una sequenza di azioni per raggiungere un obiettivo; la selezione dinamica sceglie invece in funzione della situazione corrente. Possono cooperare: il robot può pianificare un percorso ma correggerlo quando appare un ostacolo. Conservare il piano senza riesaminare i percetti renderebbe inefficace il ciclo.
 
-L'approccio dell'[[Embodied Cognition]] considera il corpo parte delle condizioni che strutturano la cognizione. Morfologia, sensori e capacità motorie influenzano ciò che può essere percepito e fatto. Le architetture dello sviluppo collegano la crescita delle abilità all'interazione lungo la vita del sistema.
+La prospezione è la capacità di anticipare possibilità future. Una simulazione interna può confrontare gli effetti attesi di due movimenti prima dell'esecuzione. Il risultato della simulazione rimane una previsione: dopo l'azione, l'osservazione permette di confrontare ciò che era atteso con ciò che è avvenuto.
 
-Nelle [[Developmental cognitive architectures|architetture cognitive dello sviluppo]], l'esplorazione individuale e l'interazione sociale offrono occasioni di apprendimento complementari: l'agente acquisisce abilità sia agendo nell'ambiente sia osservando e coordinandosi con altri.
+## Corpo e sviluppo delle capacità
+
+L'[[Embodied Cognition]] considera il corpo parte delle condizioni che strutturano la cognizione. Altezza della camera, forma della pinza e libertà delle articolazioni cambiano sia le osservazioni disponibili sia le azioni possibili. Conoscere linguisticamente una tazza non equivale a sapere come afferrarla con qualsiasi corpo.
+
+Le [[Developmental cognitive architectures|architetture dello sviluppo]] studiano l'acquisizione progressiva di abilità durante la vita del sistema. Esplorare individualmente permette di apprendere le conseguenze delle proprie azioni; l'interazione sociale offre dimostrazioni, correzioni e obiettivi condivisi. Le prospettive individuale e sociale descrivono occasioni complementari per costruire competenze.
+
+L'architettura deve dunque coordinare capacità che cambiano insieme. Migliorare il riconoscimento senza collegarlo alla selezione dell'azione può lasciare invariata la capacità di completare un compito reale.

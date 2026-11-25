@@ -2,28 +2,28 @@
 
 Capitolo: [[Explainable AI, etica e bias]]
 
-Identificare un bias richiede stabilire quale comportamento sia problematico e rispetto a quale compito o popolazione. Il termine non indica sempre la stessa cosa: il bias numerico di uno strato, una preferenza architetturale e una distorsione sociale sono concetti differenti. Qui interessa soprattutto l'uso sistematico di informazioni inappropriate o la distorsione delle risposte.
+Un bias è una distorsione sistematica che orienta rappresentazioni o decisioni. Può derivare dai dati, dall'obiettivo di training o dalle condizioni d'uso. Per affrontarlo bisogna trasformare un sospetto generico in un'ipotesi verificabile: quale caratteristica sembra influenzare il modello, in quali casi e con quali conseguenze?
 
-## Osservare le dipendenze del modello
+## Distinguere dipendenze diverse
 
-Un classificatore può utilizzare lo sfondo invece dell'oggetto. La previsione corretta su alcuni esempi non basta a escludere questa dipendenza: cambiando il contesto, la regolarità potrebbe non essere più utile. Metodi di attribuzione e visualizzazione possono aiutare a individuare caratteristiche sospette.
+Una scorciatoia statistica permette di ottenere buone prestazioni usando un indizio che non corrisponde alla proprietà cercata. Un classificatore di api può associare la categoria ai fiori, perché spesso compaiono insieme nel training. Finché anche il test contiene la stessa associazione, il difetto può restare nascosto; quando cambia lo sfondo, le prestazioni possono peggiorare.
 
-Il confronto deve restare legato al metodo: una heatmap suggerisce dove cercare, ma non fornisce da sola una dimostrazione causale o una verifica completa della fairness.
+Un bias sociale può riguardare rappresentazioni di gruppi o differenze negli errori. Un bias cognitivo riguarda invece un andamento sistematico del ragionamento. Nel belief bias, una conclusione credibile viene accettata più facilmente anche quando non segue dalle premesse. La formulazione linguistica può quindi orientare la risposta indipendentemente dai dati che dovrebbero determinarla.
 
-## Bias cognitivi e formulazione linguistica
+## Costruire un controllo mirato
 
-I modelli linguistici possono essere influenzati dalla forma di una domanda o dalla plausibilità della conclusione. Il belief bias riguarda il rischio di giudicare un argomento in funzione di ciò che sembra credibile, anziché del rapporto logico fra premesse e conclusione.
+Per verificare una dipendenza dallo sfondo, si confrontano casi con oggetto presente o assente e sfondi diversi, mantenendo il più possibile comparabili gli altri elementi. Se il punteggio segue i fiori anche senza api, l'ipotesi acquista supporto. I [[Metodi di interpretabilità dei modelli|metodi di attribuzione]] aiutano a scegliere quali regioni controllare, ma una heatmap da sola non quantifica la regolarità sull'intera distribuzione.
 
-Il caso Table QA illustra associazioni linguistiche che possono spingere verso risposte affermative anche quando i dati richiedono il contrario. Generare varianti della domanda e aggregare evidenze mira a ridurre la dipendenza dalla formulazione superficiale. La procedura deve comunque essere verificata sul compito, senza considerare il voto di maggioranza una garanzia di verità.
+Per differenze fra gruppi si confrontano errori e condizioni di raccolta su campioni adeguati. Una diversa frequenza nei report generati può suggerire un problema di rappresentazione; per stabilire differenze nelle prestazioni servono invece etichette di riferimento e misure sugli errori. Sono evidenze diverse.
 
-## Interventi e nuova valutazione
+## Ridurre la dipendenza dalla formulazione
 
-Una strategia di debiasing può analizzare il tipo di distorsione e riformulare il contesto o la richiesta. Nel metodo SACD descritto, il processo comprende determinazione del bias, analisi e revisione del prompt. Si tratta di un intervento sul comportamento in inferenza, non necessariamente di una modifica dei dati o dei pesi.
+Nel Table QA, una domanda contenente espressioni come «esattamente» può attivare associazioni con risposte affermative e spostare il comportamento verso «sì», anche quando la tabella richiede «no». Una strategia genera riformulazioni equivalenti, raccoglie evidenze e aggrega le risposte. Lo scopo è far dipendere l'esito dai dati anziché da una singola formulazione.
 
-Gli interventi vanno valutati su esempi e condizioni pertinenti. Migliorare una particolare prova non dimostra che tutti i bias siano rimossi. È necessario mantenere separate l'ipotesi sul problema, l'azione correttiva e la misura del risultato.
+L'equivalenza delle varianti è essenziale: cambiare «almeno» in «esattamente» modifica la domanda. Anche una maggioranza può ripetere lo stesso errore se tutte le varianti mantengono la stessa scorciatoia. La valutazione deve quindi controllare sia il significato delle domande sia la correttezza sulle tabelle.
 
-## Distorsioni sociali e supervisione
+SACD organizza il debiasing in determinazione del bias, analisi e revisione cognitiva del prompt. Prima individua una possibile distorsione, poi ne esplicita l'effetto e infine riformula il contesto per orientare una decisione più aderente al compito. Agisce durante l'inferenza, senza richiedere necessariamente nuovi pesi.
 
-L'analisi deve includere gli effetti dell'uso: una rappresentazione distorta può influenzare scelte che assegnano opportunità o risorse. Una spiegazione del modello è utile per rendere il problema osservabile, ma non sostituisce la valutazione delle conseguenze.
+## Verificare la correzione
 
-L'analisi tecnica individua le distorsioni e ne valuta le conseguenze. I criteri di [[Etica, fairness e accountability nell’IA|fairness e accountability]] riguardano anche l'accettabilità di quelle conseguenze e la responsabilità delle decisioni: rilevare un bias non determina da solo come il sistema debba essere utilizzato.
+Se il problema nasce da dati sbilanciati, intervenire soltanto sul prompt può essere insufficiente; se nasce da una domanda ambigua, aggiungere dati di training può non risolverlo. La correzione deve corrispondere al meccanismo ipotizzato e venire confrontata su casi nuovi, includendo gruppi e condizioni diversi. Una riduzione dell'errore in una prova documenta un miglioramento circoscritto, non l'eliminazione di ogni distorsione.

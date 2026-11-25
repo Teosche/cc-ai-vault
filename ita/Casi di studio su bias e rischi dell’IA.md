@@ -2,28 +2,30 @@
 
 Capitolo: [[Explainable AI, etica e bias]]
 
-I casi di studio permettono di distinguere errori di rappresentazione, ragionamento e controllo. Un risultato corretto in una singola prova non esclude dipendenze indesiderate; una capacità elevata non impedisce un uso inappropriato se il sistema riceve accessi o responsabilità eccessivi.
+Un caso di studio è utile quando permette di seguire il passaggio fra un comportamento osservato, l'ipotesi che lo spiega e il controllo necessario. I casi seguenti mostrano problemi a livelli diversi: caratteristiche visive, rappresentazione di gruppi, interpretazione delle tabelle e poteri di un agente.
 
-## Ape, fiore e caratteristiche spurie
+## Un fiore classificato come ape
 
-Un classificatore può associare la classe «ape» a un fiore anche quando l'ape non è presente. Le visualizzazioni generative mostrano inoltre esempi nei quali neve, alberi o altri elementi di contesto sostengono una categoria. Il problema è capire quali regolarità il modello stia effettivamente utilizzando, anziché inferirlo dal solo nome della classe.
+Un classificatore assegna correttamente «ape» a un'immagine con ape e fiore, ma assegna la stessa classe anche a un fiore senza insetto. La prima previsione, osservata da sola, non chiarisce quale indizio abbia sostenuto la decisione. La seconda rende plausibile l'ipotesi che il contesto floreale sia diventato una scorciatoia.
 
-Questo non autorizza a concludere che ogni modello per quella categoria abbia lo stesso difetto. L'analisi riguarda un sistema, esempi e procedura specifici.
+Le immagini sintetiche di DiffExplainer e DEXTER aiutano a esplorare il problema: l'ottimizzazione può trovare fiori che attivano «ape», oppure neve, alberi e cani che sostengono categorie associate a scene più complesse. Il generatore rende visibili combinazioni gradite al classificatore. Per misurare la dipendenza servono poi prove che variino oggetto e contesto, perché anche il generatore ha le proprie preferenze.
 
-## Report DEXTER e rappresentazione dei gruppi
+## Report sull'età e rappresentazione dei gruppi
 
-DEXTER combina generazione, classificazione e descrizione testuale per formulare ipotesi sul comportamento di classificatori visivi. Negli esempi di previsione dell'età, un report segnala una possibile sovrarappresentazione maschile e un altro descrive un comportamento differente su un caso bilanciato.
+In un esempio DEXTER relativo alla previsione dell'età, immagini e descrizioni sostengono un report che segnala una possibile sovrarappresentazione maschile. Il confronto illustrativo presenta una composizione 70/30 e una 50/50; il testo del report cambia fra i due casi.
 
-Il report è un elemento di analisi, non una certificazione generale di equità. Un confronto illustrativo fra campioni non documenta da solo tutte le condizioni sperimentali, la significatività statistica o gli effetti su ogni gruppo.
+La procedura trasforma esempi visivi in un'ipotesi espressa in linguaggio naturale. La catena include però più componenti: immagini prodotte, classificazione, caption e analisi testuale. Una distorsione può comparire in ciascuno. Il report può guidare un'indagine, mentre una conclusione sulle differenze di errore fra gruppi richiede dati etichettati e una valutazione quantitativa separata.
 
-## Table QA e verifica delle evidenze
+## Una risposta sulla tabella guidata dalle parole
 
-Una domanda può chiedere quante squadre abbiano ottenuto un certo punteggio contro un'avversaria. Contare valori uguali nella tabella non basta se alcune righe descrivono ruoli differenti. L'esempio mostra come una formulazione linguistica o un conteggio superficiale possano prevalere sulla relazione effettivamente richiesta.
+Il Table QA richiede di interpretare colonne, righe e condizioni della domanda. Contare tutte le occorrenze di un punteggio può essere sbagliato se alcune descrivono la squadra e altre l'avversaria. Le parole della richiesta possono inoltre attivare un'associazione appresa con «sì», prevalendo sulla verifica dei dati.
 
-La strategia di debiasing genera varianti equivalenti della domanda e aggrega le evidenze per ridurre la dipendenza da una singola formulazione. L'[[Inferenza causale|interpretazione causale]] del procedimento richiede comunque assunzioni ulteriori: la concordanza delle risposte non dimostra da sola l'eliminazione del confondimento.
+Riformulare la domanda e aggregare evidenze cerca di ridurre questa dipendenza. Il controllo decisivo rimane ricostruire quali righe soddisfino effettivamente la condizione. La concordanza fra più risposte è utile soltanto se nasce da letture corrette, non da un errore condiviso.
 
-## Rimborsi, memoria e strumenti
+## Un errore che diventa azione o memoria
 
-Un assistente con autonomia eccessiva può effettuare rimborsi o modifiche non autorizzate. Il rischio non riguarda soltanto la verità della frase generata, ma il potere operativo che le è associato.
+Un assistente per clienti può essere autorizzato a consultare ordini ma disporre anche di strumenti capaci di effettuare rimborsi. Se interpreta una richiesta come autorizzazione a usarli, un errore di decisione produce una modifica reale. L'excessive agency riguarda questa distanza fra compito, poteri e controllo dell'esecuzione.
 
-Una memoria può inoltre essere alterata con informazioni ingannevoli; uno strumento può essere invocato in un contesto non appropriato. Questi casi richiedono di controllare confini dell'azione, origine dei dati e possibilità di ricostruire gli eventi. Nessun particolare prodotto di sicurezza viene assunto come garanzia universale di prevenzione.
+Nel memory poisoning, un'informazione falsa o un'istruzione ingannevole viene conservata e influenza cicli successivi. Il problema persiste anche quando il messaggio originario non è più nel contesto immediato. Nel tool misuse, il sistema usa invece uno strumento in modo incompatibile con il compito o con le autorizzazioni previste.
+
+Questi casi richiedono di ricostruire l'origine delle informazioni, limitare le operazioni disponibili e verificare gli effetti prima di considerarli acquisiti. L'analisi del solo testo finale sarebbe insufficiente: la valutazione riguarda anche ciò che è stato eseguito e ciò che verrà riutilizzato.

@@ -1,35 +1,35 @@
-# Chatbot con LLM, RAG e Knowledge Graphs
-
 Capitolo: [[Comprensione del linguaggio, chatbot e integrazione della conoscenza]]
 
-Un chatbot basato su LLM combina un modello generativo con la gestione di messaggi, contesto e risorse informative. La sola capacità di continuare testo non specifica come conservare la conversazione, recuperare documenti o verificare le risposte. L'architettura del sistema determina quali informazioni siano disponibili a ogni turno.
+Un chatbot basato su LLM è un sistema che organizza la conversazione e le risorse disponibili a un generatore. Deve decidere quali messaggi conservare, se cercare informazioni e come trasformare i risultati in una risposta. Il modello linguistico è una componente: una conversazione affidabile dipende anche dal modo in cui gli vengono presentati contesto, strumenti ed evidenze.
 
-## Dal messaggio alla ricerca
+## Ricostruire la domanda corrente
 
-Una domanda conversazionale può dipendere da riferimenti precedenti: «e nell'altro anno?» non è una query autosufficiente. La riscrittura della query rende esplicita l'esigenza informativa utilizzando il contesto della conversazione. Non dovrebbe modificare il significato della richiesta per renderla più semplice da cercare.
+Dopo una domanda sui risultati di un'azienda nel 2024, «e l'anno dopo?» richiede di recuperare il riferimento precedente. Cercare soltanto quelle tre parole sarebbe poco utile. La query rewriting può produrre una richiesta autosufficiente che mantenga azienda, indicatore e nuovo anno. Deve esplicitare ciò che era implicito, evitando di inventare un vincolo non espresso.
 
-Il retrieval può combinare ricerca lessicale e semantica. Un reranker riordina una selezione di candidati valutandone la rilevanza rispetto alla domanda. Questa fase è distinta dalla generazione della risposta e può fallire anche se il modello generativo è competente.
+La memoria conversazionale deve conservare le informazioni utili entro il contesto disponibile. Mantenere ogni messaggio può aumentare costi e rumore; riassumerli può perdere dettagli. In una struttura come [[CoALA]], la memoria di lavoro contiene la richiesta attiva e quanto recuperato, mentre esperienze e conoscenze persistenti vengono conservate separatamente.
 
-## Costruire il contesto della risposta
+## Dal recupero alla risposta
 
-Il sistema presenta al generatore la domanda e i passaggi recuperati. La segmentazione dei documenti influenza ciò che può essere trovato: frammenti troppo piccoli perdono contesto, mentre documenti condensati in un solo vettore possono nascondere dettagli specifici.
+In una pipeline [[RAG]], i documenti sono segmentati e indicizzati prima delle domande. Alla richiesta corrente si possono associare candidati tramite ricerca lessicale e semantica. La prima è utile per identificativi e termini precisi; la seconda può trovare formulazioni diverse dello stesso concetto. Un cross-encoder usato come reranker esamina insieme query e candidato, affinando l'ordine prima di consumare il contesto del generatore.
 
-La generazione deve collegare la risposta alle evidenze. Citazioni e delimitazione dell'incertezza aiutano a verificare il risultato, ma non sostituiscono il controllo della corrispondenza fra testo e fonti.
+I testi selezionati vengono inseriti nel prompt con la domanda e le istruzioni. Il generatore deve ricostruire una risposta mantenendo soggetti, numeri e condizioni. Se si chiede la procedura di riavvio di un dispositivo, un passaggio relativo a un altro modello non basta, anche se è semanticamente vicino.
 
-Il [[RAG]] seleziona il contesto documentale in funzione della richiesta. Nel [[CAG]], invece, un insieme delimitato di documenti viene precaricato e il suo stato di elaborazione viene riutilizzato per più domande. Questa scelta modifica il modo di rendere disponibili le informazioni, mentre resta necessario controllare la fedeltà delle risposte ai documenti.
+Nel [[CAG]], un insieme delimitato di documenti viene invece precaricato e il suo stato di elaborazione viene riutilizzato tramite KV cache. Non è una raccolta di risposte pronte e non modifica i pesi. Evita il recupero per ogni domanda, ma richiede che i documenti rientrino nel contesto e che la cache rimanga coerente con la loro versione.
 
-## Domande composte e grafi
+## Ricerche multiple e relazioni strutturate
 
-Alcune richieste richiedono più ricerche indipendenti; altre richiedono passi successivi, nei quali il primo risultato determina la query seguente. La distinzione fra multi-query e multi-hop riguarda la dipendenza fra le ricerche.
+Una domanda che confronta due anni può usare due query indipendenti: entrambe sono definite prima di leggere i risultati. Una domanda sul responsabile del laboratorio di Anna richiede invece di identificare prima il laboratorio e poi cercarne il responsabile. La seconda ricerca dipende dalla prima: è una catena multi-hop.
 
-Un Knowledge Graph può fornire percorsi espliciti fra entità e sostenere operazioni come filtri, ordinamenti e aggregazioni. Non è necessario trattarlo come sostituto universale della ricerca su testi: la scelta dipende dalla struttura della domanda e dalla qualità del grafo.
+Un Knowledge Graph rende espliciti tali legami. Se contiene «Anna appartiene a L» e «Marco dirige L», il sistema può attraversare entrambe le relazioni e ottenere Marco. Filtri, conteggi e ordinamenti possono essere eseguiti sulla struttura, anziché affidati a una lettura approssimativa di molti frammenti. Rimangono da controllare identificazione delle entità, verso delle relazioni e completezza del grafo.
 
-## Memoria, strumenti e rinforzo
+## Adattare il comportamento attraverso il feedback
 
-Un chatbot può accedere a memoria di conversazione e strumenti esterni. Il ciclo di azione e osservazione consente di utilizzare risultati aggiornati, mentre la conoscenza procedurale controlla come gli strumenti vengono chiamati.
+Il reinforcement learning può modificare il comportamento del chatbot in base a una valutazione delle risposte. Nell’RLHF si raccolgono preferenze fra risposte alternative e si addestra un modello di reward a riprodurle. Il generatore viene poi trattato come una policy da ottimizzare per aumentare quel punteggio, per esempio mediante [[Proximal Policy Optimization]]. Il segnale valuta quindi il risultato della generazione, invece di fornire soltanto una risposta da imitare.
 
-L'RLHF può orientare il modello a produrre risposte preferite secondo un segnale di ricompensa. Non implementa di per sé il retrieval e non garantisce che la risposta consulti correttamente il grafo. Adattamento del modello e disponibilità di evidenze sono parti diverse del sistema.
+Per un assistente documentale si possono preferire risposte pertinenti, aderenti alle evidenze e capaci di riconoscere quando manca un’informazione. Il reward deve però rappresentare effettivamente questi criteri: premiare una risposta convincente senza verificarne il supporto può favorire una sicurezza ingiustificata. Il recupero rende disponibili documenti, il grafo rende interrogabili le relazioni e il rinforzo orienta il comportamento del generatore. Sono componenti complementari e vanno valutate sia separatamente sia nel sistema complessivo.
 
-## Valutazione delle componenti
+## Quando il chatbot agisce
 
-Bisogna verificare pertinenza dei documenti, fedeltà della risposta, supporto delle citazioni e utilità per l'utente. Una risposta scorrevole non dimostra che il recupero funzioni, così come un documento corretto non dimostra che il generatore lo abbia utilizzato fedelmente. Le [[Metriche di valutazione dei Foundation Models|metriche di valutazione]] devono distinguere questi aspetti, così da localizzare i problemi nel recupero o nella generazione.
+Un chatbot con strumenti può decidere di cercare un dato, eseguire una query e leggere l'esito prima di rispondere. Il ciclo azione-osservazione permette di correggere una ricerca fallita e raccogliere informazioni ulteriori. La produzione di una chiamata valida non dimostra però che lo strumento abbia restituito ciò che serviva.
+
+La valutazione segue dunque ogni passaggio: comprensione della richiesta, pertinenza dei dati, correttezza dell'operazione e fedeltà della risposta. Migliorare lo stile del generatore non ripara un archivio incompleto, così come un grafo corretto non impedisce una spiegazione finale inventata.

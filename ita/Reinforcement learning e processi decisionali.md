@@ -1,8 +1,6 @@
-# Reinforcement learning e processi decisionali
-
 Indice del corso: [[MOC - Cognitive]]
 
-Il capitolo introduce il ciclo fra stato, azione e ricompensa e lo collega a decisioni sequenziali e adattamento di modelli neurali. La struttura include tutti i metodi elencati nello schedule, distinguendo i richiami disponibili dagli algoritmi ancora da documentare.
+Il capitolo spiega come un agente apprenda a scegliere azioni attraverso le ricompense e le conseguenze future. Parte dai Markov Decision Processes e dalla programmazione dinamica, sviluppa gli algoritmi fondamentali e introduce l’approssimazione neurale mediante Deep Q-Networks, metodi policy gradient e Proximal Policy Optimization.
 
 ## Argomenti
 

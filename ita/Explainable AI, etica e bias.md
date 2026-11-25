@@ -2,7 +2,7 @@
 
 Indice del corso: [[MOC - Cognitive]]
 
-Il capitolo collega interpretabilità e uso responsabile dei sistemi artificiali. Le tecniche di spiegazione rendono analizzabili aspetti del comportamento, mentre etica, fairness e accountability richiedono di considerare anche le conseguenze delle decisioni.
+Il capitolo spiega come analizzare il comportamento dei modelli e interpretarne le previsioni. Collega le tecniche di spiegabilità alle questioni etiche, alla fairness e all’accountability, sviluppando strategie per identificare e mitigare i bias e casi di studio sulle conseguenze delle decisioni e dell’autonomia dei sistemi.
 
 ## Argomenti
 

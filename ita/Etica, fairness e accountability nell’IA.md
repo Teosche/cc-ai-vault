@@ -2,26 +2,28 @@
 
 Capitolo: [[Explainable AI, etica e bias]]
 
-L'uso responsabile dell'IA riguarda gli effetti del sistema su persone e contesti, non soltanto la correttezza media delle sue previsioni. Un output può essere tecnicamente ben formato e tuttavia produrre conseguenze inappropriate, soprattutto se chi lo utilizza gli attribuisce un'autorità che non possiede.
+Valutare eticamente un sistema significa considerare come le sue decisioni incidano sulle persone e quali responsabilità comportino. La qualità tecnica media è rilevante, ma non descrive da sola chi subisca gli errori, quali informazioni siano usate e se una persona possa ottenere una correzione. Il contesto d'uso trasforma una previsione numerica in una conseguenza concreta.
 
-## Bias e trattamento delle persone
+## Dalla rappresentazione alle opportunità
 
-I dati di addestramento possono contenere distorsioni che il modello riproduce o amplifica. Il problema non si limita a un errore casuale: una regolarità appresa può influenzare in modo diverso categorie di persone o situazioni. L'assenza di accesso ai dati rende più difficile identificare preventivamente tutte le distorsioni.
+Un danno rappresentazionale riguarda il modo in cui persone o gruppi vengono descritti: stereotipi, associazioni svalutanti o scarsa visibilità possono essere riprodotti dai dati. Un danno allocativo riguarda invece la distribuzione di risorse e opportunità. Le due forme possono collegarsi: una rappresentazione distorta usata per selezionare candidati può influenzare chi riceve un'opportunità.
 
-La fairness richiede di considerare il compito, i gruppi coinvolti e le conseguenze delle decisioni. La sola accuratezza aggregata non descrive necessariamente questi aspetti. Non è corretto presentare una singola metrica come soluzione universale: il criterio va collegato alle conseguenze che si intendono valutare.
+La fairness richiede quindi di definire quale differenza sia rilevante nel compito. Un'accuratezza complessiva elevata può nascondere molti più falsi negativi per un gruppo. Il confronto deve considerare numerosità, qualità delle etichette, distribuzione dei casi e costo degli errori. La stessa differenza numerica può assumere significati diversi secondo ciò che la decisione comporta.
 
-## Trasparenza e responsabilità
+Eliminare dall'input una caratteristica sensibile non elimina tutte le dipendenze: altre variabili possono conservarne associazioni. Anche una correzione deve essere valutata sul comportamento risultante, anziché dedurre l'equità dalla sola forma dell'input.
 
-Occorre distinguere se una persona stia interagendo con un sistema automatico e quali decisioni siano delegate. Accountability significa rendere possibile attribuire e controllare le responsabilità delle scelte e dei loro effetti; non coincide con chiedere al modello una spiegazione testuale a posteriori.
+## Rendere la responsabilità esercitabile
 
-Nei sistemi agentici, osservazioni, chiamate agli strumenti e risultati devono poter essere ricostruiti per capire dove si sia prodotto un errore. L'audit del comportamento riguarda il sistema complessivo, comprese le interfacce e le autorizzazioni.
+Trasparenza significa rendere disponibili informazioni utili su presenza, capacità e limiti del sistema. Accountability riguarda la possibilità di attribuire responsabilità, ricostruire decisioni e intervenire quando si produce un errore. Una spiegazione comprensibile aiuta, ma occorrono anche ruoli e possibilità concrete di revisione.
 
-## Autonomia e supervisione
+In un agente, la registrazione di richiesta, dati consultati, strumenti invocati ed esiti permette di capire dove sia nato il problema. Se viene eseguito un rimborso errato, la responsabilità non può essere esaurita dalla frase «lo ha deciso il modello»: vanno esaminate configurazione, autorizzazioni e supervisione che hanno reso possibile l'azione.
 
-Un eccesso di autonomia può permettere azioni che superano il compito previsto. Un assistente per clienti, per esempio, può effettuare rimborsi o modifiche non autorizzate se il sistema non ne limita adeguatamente l'operatività. La supervisione deve essere proporzionata alla natura delle decisioni e dei loro effetti.
+## Autonomia proporzionata agli effetti
 
-Anche l'affidamento eccessivo è un rischio: una persona può accettare un output scorretto senza verificarlo. Aggiungere una persona nel processo non basta se non dispone di informazioni e possibilità effettive di controllo.
+Un assistente che suggerisce una risposta e uno che modifica direttamente un conto esercitano poteri diversi. Il rischio di excessive agency emerge quando gli strumenti consentono più operazioni di quelle necessarie o manca un controllo adeguato sulle decisioni con conseguenze rilevanti. Definire confini operativi collega l'autonomia al compito assegnato.
 
-## Contenuti e impiego del modello
+La supervisione umana è efficace se chi interviene può vedere le evidenze, comprendere l'incertezza e modificare l'esito. Approvare rapidamente risposte senza informazioni o tempo di verifica può produrre overreliance: una fiducia eccessiva nell'automazione. La presenza formale di una persona non basta a rendere controllato il processo.
 
-Le [[Allucinazioni dei modelli linguistici|allucinazioni]] possono indurre l'utente a prendere decisioni sulla base di informazioni non supportate. Valutare il sistema richiede quindi di considerare sia la correttezza delle affermazioni sia le conseguenze del loro impiego, prevedendo controlli adeguati al contesto d'uso.
+## Analizzare il sistema nel suo uso
+
+I controlli devono includere cambiamenti dei dati, errori ripetuti e differenze fra gruppi, oltre alla prestazione iniziale. Una spiegazione del modello, un intervento sui bias e una procedura di contestazione affrontano aspetti complementari. L'obiettivo è collegare ciò che il sistema fa a conseguenze osservabili e possibilità effettive di correzione, come mostrano i [[Casi di studio su bias e rischi dell’IA]].

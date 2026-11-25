@@ -2,15 +2,16 @@
 
 Indice del corso: [[MOC - Cognitive]]
 
-Il capitolo affronta il rapporto fra linguaggio, conoscenza e affidabilità. Memorie, retrieval, grafi e procedure esplicite permettono di costruire sistemi più articolati di un singolo generatore, senza eliminare la necessità di verificare evidenze e inferenze.
+Il capitolo affronta la comprensione del linguaggio e l’accesso alla conoscenza, spiegando perché i modelli possano produrre allucinazioni. Descrive come costruire chatbot con LLM, recupero documentale, Knowledge Graphs e apprendimento da feedback, collegando rappresentazioni neurali e conoscenza simbolica per formulare risposte fondate sui dati.
 
 ## Argomenti
 
 - [[Comprensione del linguaggio e integrazione della conoscenza]]
 - [[Allucinazioni dei modelli linguistici]]
 - [[Chatbot con LLM, RAG e Knowledge Graphs]]
+- [[RAG]]
 - [[Integrazione simbolica e subsimbolica]]
 
 ## Approfondimenti
 
-Il [[RAG]] recupera i documenti in funzione della domanda e li fornisce al generatore. Il [[CAG]] precarica invece un insieme delimitato di documenti e riutilizza la KV cache del contesto comune a più richieste.
+- [[CAG]]

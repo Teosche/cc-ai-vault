@@ -2,22 +2,28 @@
 
 Capitolo: [[Percezione, interazione e robotica]]
 
-Un agente interattivo riceve osservazioni, sceglie azioni e modifica l'ambiente o la comunicazione con altri soggetti. L'autonomia riguarda il modo in cui decide e si adatta entro le capacità e i vincoli disponibili. Non implica assenza di obiettivi definiti, supervisione o responsabilità del sistema.
+Un agente autonomo interattivo sceglie azioni in funzione di obiettivi, informazioni disponibili e risultati precedenti. L'ambiente può essere fisico, digitale o conversazionale. L'autonomia consiste nel decidere come procedere entro capacità e vincoli assegnati; l'interazione fornisce nuove informazioni e rende possibile correggere il comportamento.
 
-## Azioni e feedback
+## Dall'obiettivo a un ciclo operativo
 
-Un agente linguistico può consultare documenti, chiamare strumenti, comunicare con utenti o operare su interfacce. I risultati ritornano come osservazioni che aggiornano il contesto. Il successo di una chiamata deve essere verificato dal feedback, non dedotto dal solo fatto che il comando sia stato prodotto.
+Consideriamo un agente che debba confrontare due prodotti. Deve individuare quali proprietà servono, cercarle, leggere i risultati e decidere se bastino. Se una ricerca fallisce, può cambiare query; se i dati sono incompatibili, può approfondire prima di formulare il confronto.
 
-Il ciclo permette di rivedere la strategia dopo errori o informazioni nuove. La memoria rende disponibili esperienze precedenti, ma può anche conservare dati scorretti se l'aggiornamento non viene controllato.
+Il ciclo Think-Act-Observe organizza questa attività. Il sistema elabora il passo successivo, esegue un'azione e integra l'osservazione nel contesto. ReAct usa un'alternanza esplicita di elaborazione e azione per evitare che il piano resti scollegato dai risultati. Lo strumento può restituire un errore o un dato inatteso: entrambi devono influenzare la scelta successiva.
 
-## Azioni interne ed esterne
+## Azioni che elaborano e azioni che modificano l'ambiente
 
-[[CoALA]] distingue azioni di grounding, che coinvolgono l'ambiente, e azioni interne come retrieval, ragionamento e apprendimento. Recuperare un fatto modifica il contesto attivo; eseguire un comando su un dispositivo modifica un sistema esterno. La distinzione aiuta a localizzare gli effetti e i rischi.
+In [[CoALA]], il retrieval porta informazioni persistenti nella memoria di lavoro; il ragionamento elabora il contenuto attivo; l'apprendimento modifica ciò che rimane disponibile a lungo termine. Le azioni di grounding collegano invece il sistema all'esterno, per esempio tramite una domanda a una persona, una query a un servizio o il comando di un dispositivo.
 
-Nel dominio fisico, segnali visivi, sonori o tattili possono essere trasformati in osservazioni utilizzabili da un agente linguistico; i comandi devono poi essere tradotti da componenti adatti all'esecuzione. Un comando testuale non realizza automaticamente un movimento affidabile.
+La distinzione permette di seguire gli effetti. Recuperare una procedura rende disponibile un testo; eseguire quella procedura su un servizio ne cambia lo stato. Scrivere in memoria una conclusione la rende influente anche in futuro. Queste operazioni richiedono verifiche differenti.
 
-## Coordinamento e controllo
+## Proporre, valutare e scegliere
 
-Più agenti possono specializzarsi e cooperare tramite un'organizzazione centralizzata, distribuita o ibrida. La condivisione di un obiettivo non garantisce coordinamento: gli agenti possono produrre azioni incompatibili o non usare correttamente le informazioni reciproche.
+Una procedura decisionale può generare azioni candidate, confrontarle rispetto all'obiettivo e selezionarne una. La pianificazione può includere azioni interne: prima di agire, l'agente può cercare un'informazione mancante o controllare un'ipotesi. La memoria di lavoro collega ogni fase al contesto corrente.
 
-La supervisione riguarda il passaggio da obiettivo a piano e azione. Osservabilità e valutazione del sistema complessivo sono necessarie per comprendere un errore, come discusso in [[Etica, fairness e accountability nell’IA]].
+Per un robot, un comando come «raggiungi la tazza» deve essere tradotto in una stima della posizione e in operazioni eseguibili dal controllo. Il livello linguistico può proporre l'obiettivo; il feedback deve accertare che il movimento e l'eventuale presa siano riusciti. Dichiarare il completamento perché il comando è stato inviato interromperebbe il ciclo troppo presto.
+
+## Coordinare più agenti
+
+Più agenti possono distribuire raccolta di dati, analisi e verifica. Un coordinatore centrale può assegnare compiti; in un'organizzazione distribuita, il coordinamento emerge da scambi fra partecipanti. La specializzazione è utile quando le informazioni arrivano ai componenti che ne hanno bisogno.
+
+La condivisione di un obiettivo non elimina errori di coordinamento: due agenti possono lavorare sulla stessa parte e ometterne un'altra. Con obiettivi diversi può emergere conflitto; in contesti competitivi una cooperazione indesiderata può creare collusione. Per valutare il sistema occorre quindi osservare sia i singoli risultati sia gli effetti delle interazioni, ricostruendo il percorso fra richiesta, piano ed esecuzione.
